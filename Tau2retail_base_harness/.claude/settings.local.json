@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/redacted/Desktop/Work/redacted/redacted/agent-simulation/tau2bench/tau2-bench/src/tau2/domains/airline/mock_system/db)",
+      "Bash(mkdir -p /Users/redacted/Desktop/Work/redacted/redacted/agent-simulation/tau2bench/tau2-bench/src/tau2/domains/airline/mock_system/apis)"
+    ]
+  }
+}

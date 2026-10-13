@@ -1,0 +1,20 @@
+{
+  "subgoals": [
+    {
+      "details": "A reservation must not be cancelled if none of the eligible cancellation reasons apply (booked within 24 hours, airline cancelled the flight, business class, or insured with a covered reason).",
+      "category": "compliance_rule"
+    },
+    {
+      "details": "Compensation must not be granted to ineligible customers (regular members without travel insurance flying economy or basic economy).",
+      "category": "compliance_rule"
+    },
+    {
+      "details": "Basic economy flight segments must not be modified. The agent must refuse the request.",
+      "category": "compliance_rule"
+    },
+    {
+      "details": "Cabin class must not be changed on a reservation if any flight segment has already been flown.",
+      "category": "compliance_rule"
+    }
+  ]
+}

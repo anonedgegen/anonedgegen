@@ -1,0 +1,11 @@
+# Metric / plotting scripts
+numpy
+matplotlib
+
+# Gemma inference server (gemma_server.py)
+torch
+transformers
+peft
+fastapi
+uvicorn
+pydantic

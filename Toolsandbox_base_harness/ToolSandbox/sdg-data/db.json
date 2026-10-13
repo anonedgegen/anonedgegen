@@ -1,0 +1,284 @@
+{
+  "contacts": [
+    {
+      "person_id": "3815cac9-3cab-5d75-89e2-fe12fe19779e",
+      "name": "Tomas Haake",
+      "phone_number": "+11233344455",
+      "relationship": "self",
+      "is_self": true
+    },
+    {
+      "person_id": "9e137f06-916a-5310-8174-cf0b7e9f7054",
+      "name": "Fredrik Thordendal",
+      "phone_number": "+12453344098",
+      "relationship": "friend",
+      "is_self": false
+    },
+    {
+      "person_id": "a22e1984-6c6c-530c-8831-c3ea3b5138e7",
+      "name": "John Petrucci",
+      "phone_number": "+1234560987",
+      "relationship": "friend",
+      "is_self": false
+    },
+    {
+      "person_id": "e3570ab6-0819-5032-be1e-2b366390c8ef",
+      "name": "Homer S",
+      "phone_number": "+10000000000",
+      "relationship": "boss",
+      "is_self": false
+    }
+  ],
+  "messages": [
+    {
+      "message_id": "0d25dbb9-3737-5e0e-b0f0-7c1e359baccc",
+      "sender_person_id": null,
+      "sender_phone_number": "+18307976530",
+      "recipient_person_id": "3815cac9-3cab-5d75-89e2-fe12fe19779e",
+      "recipient_phone_number": "+11233344455",
+      "content": "Hey kid, you want some GPU?",
+      "creation_timestamp": 1790508207.411174
+    },
+    {
+      "message_id": "caaca9e8-7aa9-55a6-9d32-4b4aefed40d1",
+      "sender_person_id": "3815cac9-3cab-5d75-89e2-fe12fe19779e",
+      "sender_phone_number": "+11233344455",
+      "recipient_person_id": null,
+      "recipient_phone_number": "+18307976530",
+      "content": "No leave me alone",
+      "creation_timestamp": 1790511807.411174
+    },
+    {
+      "message_id": "0a0102dc-ceaf-5ebb-a665-63da99bf7c47",
+      "sender_person_id": "e3570ab6-0819-5032-be1e-2b366390c8ef",
+      "sender_phone_number": "+10000000000",
+      "recipient_person_id": "3815cac9-3cab-5d75-89e2-fe12fe19779e",
+      "recipient_phone_number": "+11233344455",
+      "content": "How's it going",
+      "creation_timestamp": 1790778330.411174
+    },
+    {
+      "message_id": "6c9382cb-720e-5f2c-8ac0-77e7ebdea446",
+      "sender_person_id": "3815cac9-3cab-5d75-89e2-fe12fe19779e",
+      "sender_phone_number": "+11233344455",
+      "recipient_person_id": "e3570ab6-0819-5032-be1e-2b366390c8ef",
+      "recipient_phone_number": "+10000000000",
+      "content": "Things are proceeding as expected",
+      "creation_timestamp": 1790778390.411174
+    },
+    {
+      "message_id": "0a0102dc-ceaf-5ebb-a665-63da99bf7c47",
+      "sender_person_id": "e3570ab6-0819-5032-be1e-2b366390c8ef",
+      "sender_phone_number": "+10000000000",
+      "recipient_person_id": "3815cac9-3cab-5d75-89e2-fe12fe19779e",
+      "recipient_phone_number": "+11233344455",
+      "content": "Good, keep me posted",
+      "creation_timestamp": 1790782051.411174
+    }
+  ],
+  "reminders": [
+    {
+      "reminder_id": "8f5b6fc6-1c25-5467-91ba-d4d1e17c7129",
+      "content": "Look for Company SF tickets",
+      "creation_timestamp": 1790522913.411174,
+      "reminder_timestamp": 1790695713.411174,
+      "latitude": null,
+      "longitude": null
+    },
+    {
+      "reminder_id": "da2b856e-9390-511f-bcbe-7005f72cbf5e",
+      "content": "Buy tickets for Merrily next week",
+      "creation_timestamp": 1790695713.411174,
+      "reminder_timestamp": 1790782053.411174,
+      "latitude": null,
+      "longitude": null
+    },
+    {
+      "reminder_id": "54f20be9-eac3-5e76-8e57-724e48d3d477",
+      "content": "Buy a nice rich navy bathing dress",
+      "creation_timestamp": 1790778513.411174,
+      "reminder_timestamp": 1790785713.411174,
+      "latitude": 37.3237926356735,
+      "longitude": -122.03961770355414
+    }
+  ],
+  "settings": {
+    "cellular": true,
+    "wifi": true,
+    "location_service": true,
+    "low_battery_mode": false,
+    "current_location": {
+      "latitude": 37.334606,
+      "longitude": -122.009102
+    }
+  },
+  "settings_variants": [
+    {
+      "variant_name": "default_all_on",
+      "cellular": true,
+      "wifi": true,
+      "location_service": true,
+      "low_battery_mode": false,
+      "description": "Default state: all services enabled, low battery off"
+    },
+    {
+      "variant_name": "wifi_off",
+      "cellular": true,
+      "wifi": false,
+      "location_service": true,
+      "low_battery_mode": false,
+      "description": "WiFi disabled. Weather, stock, currency, location search, and holiday tools will raise ConnectionError."
+    },
+    {
+      "variant_name": "cellular_off",
+      "cellular": false,
+      "wifi": true,
+      "location_service": true,
+      "low_battery_mode": false,
+      "description": "Cellular disabled. send_message_with_phone_number will raise ConnectionError."
+    },
+    {
+      "variant_name": "location_off",
+      "cellular": true,
+      "wifi": true,
+      "location_service": false,
+      "low_battery_mode": false,
+      "description": "Location service disabled. get_current_location will raise PermissionError. search_location_around_lat_lon and search_weather_around_lat_lon fail when no lat/lon explicitly provided."
+    },
+    {
+      "variant_name": "wifi_and_cellular_off",
+      "cellular": false,
+      "wifi": false,
+      "location_service": true,
+      "low_battery_mode": false,
+      "description": "Both wifi and cellular disabled. Messaging and all web-backed search tools fail."
+    },
+    {
+      "variant_name": "wifi_and_location_off",
+      "cellular": true,
+      "wifi": false,
+      "location_service": false,
+      "low_battery_mode": false,
+      "description": "WiFi and location disabled. Web-backed search tools and location tools fail."
+    },
+    {
+      "variant_name": "cellular_and_location_off",
+      "cellular": false,
+      "wifi": true,
+      "location_service": false,
+      "low_battery_mode": false,
+      "description": "Cellular and location disabled. Messaging and location tools fail."
+    },
+    {
+      "variant_name": "low_battery_on",
+      "cellular": false,
+      "wifi": false,
+      "location_service": false,
+      "low_battery_mode": true,
+      "description": "Low battery mode ON. All dependent services (cellular, wifi, location) are forced off. Enabling any service raises PermissionError until low battery mode is turned off."
+    }
+  ],
+  "sample_weather_data": [
+    {
+      "location": "Cupertino, CA",
+      "latitude": 37.334606,
+      "longitude": -122.009102,
+      "date": "2026-09-30",
+      "temperature_fahrenheit": 72,
+      "temperature_celsius": 22.2,
+      "condition": "Partly Cloudy",
+      "humidity_percent": 55,
+      "wind_mph": 8
+    },
+    {
+      "location": "San Francisco, CA",
+      "latitude": 37.7749,
+      "longitude": -122.4194,
+      "date": "2026-09-30",
+      "temperature_fahrenheit": 65,
+      "temperature_celsius": 18.3,
+      "condition": "Foggy",
+      "humidity_percent": 78,
+      "wind_mph": 12
+    }
+  ],
+  "sample_stock_data": [
+    {
+      "company": "Apple Inc.",
+      "symbol": "AAPL",
+      "exchange": "NASDAQ",
+      "price_usd": 227.50,
+      "change_percent": 1.2,
+      "market_cap": "3.5T"
+    },
+    {
+      "company": "Tesla Inc.",
+      "symbol": "TSLA",
+      "exchange": "NASDAQ",
+      "price_usd": 265.30,
+      "change_percent": -0.8,
+      "market_cap": "842B"
+    }
+  ],
+  "sample_currency_data": [
+    {
+      "from_currency": "USD",
+      "to_currency": "EUR",
+      "rate": 0.92,
+      "amount": 100,
+      "converted": 92.0
+    },
+    {
+      "from_currency": "USD",
+      "to_currency": "JPY",
+      "rate": 149.5,
+      "amount": 100,
+      "converted": 14950.0
+    }
+  ],
+  "sample_location_data": [
+    {
+      "name": "Apple Park",
+      "latitude": 37.334606,
+      "longitude": -122.009102,
+      "address": "One Apple Park Way, Cupertino, CA 95014",
+      "category": "office"
+    },
+    {
+      "name": "Whole Foods Market",
+      "latitude": 37.3318,
+      "longitude": -122.0112,
+      "address": "20830 Stevens Creek Blvd, Cupertino, CA 95014",
+      "category": "grocery"
+    },
+    {
+      "name": "Cupertino Library",
+      "latitude": 37.3185,
+      "longitude": -122.0148,
+      "address": "10800 Torre Ave, Cupertino, CA 95014",
+      "category": "library"
+    }
+  ],
+  "sample_holidays": [
+    {
+      "name": "Thanksgiving",
+      "date": "2026-11-26",
+      "timestamp": 1795939200
+    },
+    {
+      "name": "Christmas Day",
+      "date": "2026-12-25",
+      "timestamp": 1798444800
+    },
+    {
+      "name": "New Year's Day",
+      "date": "2027-01-01",
+      "timestamp": 1799049600
+    },
+    {
+      "name": "Independence Day",
+      "date": "2027-07-04",
+      "timestamp": 1814918400
+    }
+  ]
+}

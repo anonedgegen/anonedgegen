@@ -1,0 +1,19 @@
+# Local configuration and generated files
+.DS_Store
+.env*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.pdm-build/
+*.egg-info/
+build/
+dist/
+evaluation-logs/
+jobs/
+*.log
+/ToolSandbox/data/

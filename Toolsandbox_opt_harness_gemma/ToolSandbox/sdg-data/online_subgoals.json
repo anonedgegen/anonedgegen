@@ -1,0 +1,20 @@
+{
+  "subgoals": [
+    {
+      "details": "A message must not be sent when cellular service is disabled. The agent must first enable cellular service (with user permission) before sending.",
+      "category": "compliance_rule"
+    },
+    {
+      "details": "Cellular, wifi, or location service must not be enabled while low battery mode is on. The agent must first turn off low battery mode (with user permission) before enabling any dependent service.",
+      "category": "compliance_rule"
+    },
+    {
+      "details": "A second contact with is_self=True must not be added or an existing contact modified to is_self=True if a self contact already exists in the database.",
+      "category": "compliance_rule"
+    },
+    {
+      "details": "A tool must not be called when its required service (cellular, wifi, or location) is disabled. The agent must first enable the required service (with user permission) before proceeding with the tool call.",
+      "category": "compliance_rule"
+    }
+  ]
+}

@@ -1,0 +1,1042 @@
+{
+  "tools": [
+    {
+      "name": "add_contact",
+      "domain": "contact",
+      "tool_type": "write",
+      "input_types": [
+        "contact"
+      ],
+      "output_types": [
+        "contact"
+      ],
+      "description": "Add a new contact person to contact database. Entries with identical information are allowed, and will be assigned different person_ids.",
+      "arguments": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "Name of contact person."
+        },
+        {
+          "name": "phone_number",
+          "type": "string",
+          "required": true,
+          "description": "Phone number of contact person."
+        },
+        {
+          "name": "relationship",
+          "type": "string",
+          "required": false,
+          "description": "Optional. Relationship between user and this contact."
+        },
+        {
+          "name": "is_self",
+          "type": "boolean",
+          "required": false,
+          "description": "Optional. Defaults to False. Should be set to True if the contact corresponds to the current user."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "String format unique identifier for the contact person (person_id). This can be passed to other functions which require a unique identifier for this contact person."
+      },
+      "side_effects": "Creates a new entry in the contact database. Raises DuplicateError if a self entry already exists and is_self is True."
+    },
+    {
+      "name": "modify_contact",
+      "domain": "contact",
+      "tool_type": "write",
+      "input_types": [
+        "contact"
+      ],
+      "output_types": [],
+      "description": "Modify a contact entry with new information provided. At least one field among name, phone_number, relationship, is_self must be provided.",
+      "arguments": [
+        {
+          "name": "person_id",
+          "type": "string",
+          "required": true,
+          "description": "String unique identifier for the contact person."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "New name for the person."
+        },
+        {
+          "name": "phone_number",
+          "type": "string",
+          "required": false,
+          "description": "New phone number for the person."
+        },
+        {
+          "name": "relationship",
+          "type": "string",
+          "required": false,
+          "description": "New relationship for the person."
+        },
+        {
+          "name": "is_self",
+          "type": "boolean",
+          "required": false,
+          "description": "Should be set to True if the contact corresponds to the current user."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Updates the matching contact entry in the database. Raises ValueError if no update fields are provided, NoDataError if person_id not found, DuplicateError if modifying to self when a self entry already exists."
+    },
+    {
+      "name": "remove_contact",
+      "domain": "contact",
+      "tool_type": "write",
+      "input_types": [
+        "contact"
+      ],
+      "output_types": [],
+      "description": "Remove an existing contact person from the contact database.",
+      "arguments": [
+        {
+          "name": "person_id",
+          "type": "string",
+          "required": true,
+          "description": "String format unique identifier of the person to be deleted."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Removes the contact entry from the database. Raises NoDataError if the provided person_id was not found."
+    },
+    {
+      "name": "search_contacts",
+      "domain": "contact",
+      "tool_type": "read",
+      "input_types": [
+        "contact"
+      ],
+      "output_types": [
+        "contact"
+      ],
+      "description": "Search for a contact person based on provided arguments. Uses exact matching for person_id, phone_number, and is_self. Uses fuzzy string matching for name and relationship (relationship threshold=90). Returns all contact entries matching all provided criteria.",
+      "arguments": [
+        {
+          "name": "person_id",
+          "type": "string",
+          "required": false,
+          "description": "String format unique identifier for the contact person. Will be exact matched."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "Name of contact person. Will be fuzzy matched."
+        },
+        {
+          "name": "phone_number",
+          "type": "string",
+          "required": false,
+          "description": "Phone number of contact person. Will be exact matched."
+        },
+        {
+          "name": "relationship",
+          "type": "string",
+          "required": false,
+          "description": "Relationship between user and this contact. Will be fuzzy matched (threshold=90)."
+        },
+        {
+          "name": "is_self",
+          "type": "boolean",
+          "required": false,
+          "description": "If the requested contact corresponds to the current user. Will be exact matched."
+        }
+      ],
+      "returns": {
+        "type": "array",
+        "description": "A list of matching Contact objects. An empty list if no matching contacts were found.",
+        "items": {
+          "type": "Contact"
+        }
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "send_message_with_phone_number",
+      "domain": "messaging",
+      "tool_type": "write",
+      "input_types": [
+        "contact"
+      ],
+      "output_types": [
+        "message"
+      ],
+      "description": "Send a message to a recipient using phone_number. Requires cellular service to be enabled. Automatically resolves the sender from the self contact entry.",
+      "arguments": [
+        {
+          "name": "phone_number",
+          "type": "string",
+          "required": true,
+          "description": "String format phone number to send the message to."
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "required": true,
+          "description": "Message payload text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "String format unique identifier for the message (message_id). This can be passed to other functions which require a unique identifier for this message."
+      },
+      "side_effects": "Creates a new message entry in the messaging database with sender, recipient, content, and creation timestamp. Raises ConnectionError if cellular service is not enabled."
+    },
+    {
+      "name": "search_messages",
+      "domain": "messaging",
+      "tool_type": "read",
+      "input_types": [
+        "message",
+        "contact"
+      ],
+      "output_types": [
+        "message"
+      ],
+      "description": "Search for a message based on provided arguments. Uses exact matching for message_id, sender_person_id, sender_phone_number, recipient_person_id, recipient_phone_number. Uses fuzzy string matching for content (threshold=50). Uses range matching for creation timestamps with lowerbound and upperbound.",
+      "arguments": [
+        {
+          "name": "message_id",
+          "type": "string",
+          "required": false,
+          "description": "String format unique identifier for message. Will be exact matched."
+        },
+        {
+          "name": "sender_person_id",
+          "type": "string",
+          "required": false,
+          "description": "String format unique identifier for the sender. Will be exact matched."
+        },
+        {
+          "name": "sender_phone_number",
+          "type": "string",
+          "required": false,
+          "description": "Phone number for the sender. Will be exact matched."
+        },
+        {
+          "name": "recipient_person_id",
+          "type": "string",
+          "required": false,
+          "description": "String format unique identifier for the recipient. Will be exact matched."
+        },
+        {
+          "name": "recipient_phone_number",
+          "type": "string",
+          "required": false,
+          "description": "Phone number for the recipient. Will be exact matched."
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "required": false,
+          "description": "Message content. Will be fuzzy matched (threshold=50)."
+        },
+        {
+          "name": "creation_timestamp_lowerbound",
+          "type": "number",
+          "required": false,
+          "description": "Lowerbound of the POSIX timestamp of the time the message was created."
+        },
+        {
+          "name": "creation_timestamp_upperbound",
+          "type": "number",
+          "required": false,
+          "description": "Upperbound of the POSIX timestamp of the time the message was created."
+        }
+      ],
+      "returns": {
+        "type": "array",
+        "description": "A list of matching Message objects. An empty list if no matching messages were found.",
+        "items": {
+          "type": "Message"
+        }
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "add_reminder",
+      "domain": "reminder",
+      "tool_type": "write",
+      "input_types": [],
+      "output_types": [
+        "reminder"
+      ],
+      "description": "Add a reminder. A creation timestamp is automatically recorded.",
+      "arguments": [
+        {
+          "name": "content",
+          "type": "string",
+          "required": true,
+          "description": "Content of the reminder."
+        },
+        {
+          "name": "reminder_timestamp",
+          "type": "number",
+          "required": true,
+          "description": "When the user wants to be reminded. Expressed in POSIX timestamp."
+        },
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": false,
+          "description": "Optional. Latitude of the location associated with this reminder."
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": false,
+          "description": "Optional. Longitude of the location associated with this reminder."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "String format unique identifier for the reminder (reminder_id). This can be passed to other functions which require a unique identifier for this reminder."
+      },
+      "side_effects": "Creates a new reminder entry in the reminder database with content, creation_timestamp, reminder_timestamp, latitude, and longitude."
+    },
+    {
+      "name": "modify_reminder",
+      "domain": "reminder",
+      "tool_type": "write",
+      "input_types": [
+        "reminder"
+      ],
+      "output_types": [],
+      "description": "Modify a reminder with new information provided. Creation timestamp is updated automatically. At least one field among content, reminder_timestamp, latitude, longitude must be provided.",
+      "arguments": [
+        {
+          "name": "reminder_id",
+          "type": "string",
+          "required": true,
+          "description": "String format unique identifier of the reminder to be modified."
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "required": false,
+          "description": "New content for the reminder."
+        },
+        {
+          "name": "reminder_timestamp",
+          "type": "number",
+          "required": false,
+          "description": "When the user wants to be reminded. Expressed in POSIX timestamp."
+        },
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": false,
+          "description": "Latitude of the location associated with this reminder. Can be set to null to remove."
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": false,
+          "description": "Longitude of the location associated with this reminder. Can be set to null to remove."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Updates the matching reminder entry in the database and refreshes the creation timestamp. Raises ValueError if no update fields provided, NoDataError if reminder_id not found, DuplicateError if multiple entries with same id."
+    },
+    {
+      "name": "search_reminder",
+      "domain": "reminder",
+      "tool_type": "read",
+      "input_types": [
+        "reminder"
+      ],
+      "output_types": [
+        "reminder"
+      ],
+      "description": "Search for a reminder based on provided arguments. Uses exact matching for reminder_id, latitude, longitude. Uses fuzzy string matching for content (threshold=50). Uses range matching for creation and reminder timestamps with lowerbound and upperbound.",
+      "arguments": [
+        {
+          "name": "reminder_id",
+          "type": "string",
+          "required": false,
+          "description": "String format unique identifier for the reminder. Will be exact matched."
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "required": false,
+          "description": "Content of the reminder. Will be fuzzy matched (threshold=50)."
+        },
+        {
+          "name": "creation_timestamp_lowerbound",
+          "type": "number",
+          "required": false,
+          "description": "Lowerbound of the POSIX timestamp of the time the reminder was created."
+        },
+        {
+          "name": "creation_timestamp_upperbound",
+          "type": "number",
+          "required": false,
+          "description": "Upperbound of the POSIX timestamp of the time the reminder was created."
+        },
+        {
+          "name": "reminder_timestamp_lowerbound",
+          "type": "number",
+          "required": false,
+          "description": "Lowerbound of the POSIX timestamp of when the reminder should fire."
+        },
+        {
+          "name": "reminder_timestamp_upperbound",
+          "type": "number",
+          "required": false,
+          "description": "Upperbound of the POSIX timestamp of when the reminder should fire."
+        },
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": false,
+          "description": "Latitude of the location associated with the reminder. Will be exact matched."
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": false,
+          "description": "Longitude of the location associated with the reminder. Will be exact matched."
+        }
+      ],
+      "returns": {
+        "type": "array",
+        "description": "A list of matching Reminder objects. An empty list if no matching reminders were found.",
+        "items": {
+          "type": "Reminder"
+        }
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "remove_reminder",
+      "domain": "reminder",
+      "tool_type": "write",
+      "input_types": [
+        "reminder"
+      ],
+      "output_types": [],
+      "description": "Remove a reminder given its unique identifier.",
+      "arguments": [
+        {
+          "name": "reminder_id",
+          "type": "string",
+          "required": true,
+          "description": "String format unique identifier of the reminder to be removed."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Removes the reminder entry from the database. Raises NoDataError if the provided reminder_id was not found."
+    },
+    {
+      "name": "set_low_battery_mode_status",
+      "domain": "setting",
+      "tool_type": "write",
+      "input_types": [],
+      "output_types": [],
+      "description": "Enable or disable low battery mode. When turned on, automatically disables cellular, wifi, and location_service. While low battery mode is on, those services cannot be re-enabled.",
+      "arguments": [
+        {
+          "name": "on",
+          "type": "boolean",
+          "required": true,
+          "description": "If true, turn on low battery mode. If false, turn it off."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Toggles the low_battery_mode setting. When turning on, also disables cellular, wifi, and location_service. Raises ValueError if low battery mode is already in the requested state."
+    },
+    {
+      "name": "get_low_battery_mode_status",
+      "domain": "setting",
+      "tool_type": "read",
+      "input_types": [],
+      "output_types": [],
+      "description": "Request low battery mode status.",
+      "arguments": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Boolean indicating if low battery mode is on."
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "set_location_service_status",
+      "domain": "setting",
+      "tool_type": "write",
+      "input_types": [],
+      "output_types": [],
+      "description": "Enable or disable location service. Cannot be turned on while low battery mode is active.",
+      "arguments": [
+        {
+          "name": "on",
+          "type": "boolean",
+          "required": true,
+          "description": "If true, turn on location service. If false, turn it off."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Toggles the location_service setting. Raises ValueError if already in the requested state. Raises PermissionError if low battery mode is on and attempting to enable."
+    },
+    {
+      "name": "get_location_service_status",
+      "domain": "setting",
+      "tool_type": "read",
+      "input_types": [],
+      "output_types": [],
+      "description": "Request location service status.",
+      "arguments": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Boolean indicating if the location service is on."
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "set_cellular_service_status",
+      "domain": "setting",
+      "tool_type": "write",
+      "input_types": [],
+      "output_types": [],
+      "description": "Enable or disable cellular service. Cannot be turned on while low battery mode is active.",
+      "arguments": [
+        {
+          "name": "on",
+          "type": "boolean",
+          "required": true,
+          "description": "If true, turn on cellular service. If false, turn it off."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Toggles the cellular service setting. Raises ValueError if already in the requested state. Raises PermissionError if low battery mode is on and attempting to enable."
+    },
+    {
+      "name": "get_cellular_service_status",
+      "domain": "setting",
+      "tool_type": "read",
+      "input_types": [],
+      "output_types": [],
+      "description": "Request cellular service status.",
+      "arguments": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Boolean indicating if the cellular service is on."
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "set_wifi_status",
+      "domain": "setting",
+      "tool_type": "write",
+      "input_types": [],
+      "output_types": [],
+      "description": "Enable or disable wifi. Cannot be turned on while low battery mode is active.",
+      "arguments": [
+        {
+          "name": "on",
+          "type": "boolean",
+          "required": true,
+          "description": "If true, turn on wifi. If false, turn it off."
+        }
+      ],
+      "returns": {
+        "type": "null",
+        "description": "Returns None."
+      },
+      "side_effects": "Toggles the wifi setting. Raises ValueError if already in the requested state. Raises PermissionError if low battery mode is on and attempting to enable."
+    },
+    {
+      "name": "get_wifi_status",
+      "domain": "setting",
+      "tool_type": "read",
+      "input_types": [],
+      "output_types": [],
+      "description": "Request wifi status.",
+      "arguments": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Boolean indicating if wifi is on."
+      },
+      "side_effects": "None. This is a read-only tool."
+    },
+    {
+      "name": "get_current_location",
+      "domain": "setting",
+      "tool_type": "read",
+      "input_types": [],
+      "output_types": [
+        "location"
+      ],
+      "description": "Request current location latitude and longitude. Requires location service to be enabled.",
+      "arguments": [],
+      "returns": {
+        "type": "Location",
+        "description": "A dictionary containing 'latitude' and 'longitude' (both floats) of the current location."
+      },
+      "side_effects": "None. This is a read-only tool. Raises PermissionError if location_service is not turned on."
+    },
+    {
+      "name": "get_current_timestamp",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Get current POSIX timestamp.",
+      "arguments": [],
+      "returns": {
+        "type": "number",
+        "description": "Float value POSIX timestamp representing the current time."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    },
+    {
+      "name": "timestamp_to_datetime_info",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Convert POSIX timestamp to a dictionary of date time information, including year, month, day, hour, minute, second, and isoweekday. isoweekday ranges from 1 (Monday) to 7 (Sunday).",
+      "arguments": [
+        {
+          "name": "timestamp",
+          "type": "number",
+          "required": true,
+          "description": "Float representing POSIX timestamp."
+        }
+      ],
+      "returns": {
+        "type": "DateTimeInfo",
+        "description": "A dictionary containing year, month, day, hour, minute, second, and isoweekday (all integers)."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    },
+    {
+      "name": "datetime_info_to_timestamp",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Convert date time information to POSIX timestamp.",
+      "arguments": [
+        {
+          "name": "year",
+          "type": "integer",
+          "required": true,
+          "description": "Year of timestamp."
+        },
+        {
+          "name": "month",
+          "type": "integer",
+          "required": true,
+          "description": "Month of timestamp."
+        },
+        {
+          "name": "day",
+          "type": "integer",
+          "required": true,
+          "description": "Day of timestamp."
+        },
+        {
+          "name": "hour",
+          "type": "integer",
+          "required": true,
+          "description": "Hour of timestamp in 24hr format."
+        },
+        {
+          "name": "minute",
+          "type": "integer",
+          "required": true,
+          "description": "Minute of timestamp."
+        },
+        {
+          "name": "second",
+          "type": "integer",
+          "required": true,
+          "description": "Second of timestamp."
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "POSIX timestamp as a float."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    },
+    {
+      "name": "shift_timestamp",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Shifts a POSIX timestamp by provided deltas. Delta can be positive or negative.",
+      "arguments": [
+        {
+          "name": "timestamp",
+          "type": "number",
+          "required": true,
+          "description": "POSIX timestamp to be shifted."
+        },
+        {
+          "name": "weeks",
+          "type": "integer",
+          "required": false,
+          "description": "Number of weeks to add or subtract. Defaults to 0."
+        },
+        {
+          "name": "days",
+          "type": "integer",
+          "required": false,
+          "description": "Number of days to add or subtract. Defaults to 0."
+        },
+        {
+          "name": "hours",
+          "type": "integer",
+          "required": false,
+          "description": "Number of hours to add or subtract. Defaults to 0."
+        },
+        {
+          "name": "minutes",
+          "type": "integer",
+          "required": false,
+          "description": "Number of minutes to add or subtract. Defaults to 0."
+        },
+        {
+          "name": "seconds",
+          "type": "integer",
+          "required": false,
+          "description": "Number of seconds to add or subtract. Defaults to 0."
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "A shifted POSIX timestamp with deltas applied."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    },
+    {
+      "name": "timestamp_diff",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Calculates the difference between two timestamps (timestamp_1 - timestamp_0), returned as days and seconds.",
+      "arguments": [
+        {
+          "name": "timestamp_0",
+          "type": "number",
+          "required": true,
+          "description": "POSIX timestamp to subtract."
+        },
+        {
+          "name": "timestamp_1",
+          "type": "number",
+          "required": true,
+          "description": "POSIX timestamp to subtract from."
+        }
+      ],
+      "returns": {
+        "type": "TimeDelta",
+        "description": "A dictionary containing the difference with keys 'days' (int) and 'seconds' (int)."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    },
+    {
+      "name": "seconds_to_hours_minutes_seconds",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Convert total number of seconds past 0:00 into hours, minutes and seconds.",
+      "arguments": [
+        {
+          "name": "seconds",
+          "type": "number",
+          "required": true,
+          "description": "Number of seconds past 0:00."
+        }
+      ],
+      "returns": {
+        "type": "TimeComponents",
+        "description": "A dictionary with keys 'hour', 'minute', 'second' (all integers)."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    },
+    {
+      "name": "unit_conversion",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [],
+      "output_types": [],
+      "description": "Convert a certain amount from one unit to another. Accepts common english names for units (e.g. celsius, fahrenheit).",
+      "arguments": [
+        {
+          "name": "amount",
+          "type": "number",
+          "required": true,
+          "description": "Float point amount in from_unit."
+        },
+        {
+          "name": "from_unit",
+          "type": "string",
+          "required": true,
+          "description": "Unit to convert from. For example 'celsius'."
+        },
+        {
+          "name": "to_unit",
+          "type": "string",
+          "required": true,
+          "description": "Unit to convert to. For example 'fahrenheit'."
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "Converted amount as a float."
+      },
+      "side_effects": "None. This is a pure computation tool. Raises UndefinedUnitError if unable to parse unit names, ValueError if unable to convert between provided units."
+    },
+    {
+      "name": "calculate_lat_lon_distance",
+      "domain": "generic",
+      "tool_type": "generic",
+      "input_types": [
+        "location"
+      ],
+      "output_types": [],
+      "description": "Calculate the distance between 2 pairs of latitude and longitude.",
+      "arguments": [
+        {
+          "name": "latitude_0",
+          "type": "number",
+          "required": true,
+          "description": "First Latitude."
+        },
+        {
+          "name": "longitude_0",
+          "type": "number",
+          "required": true,
+          "description": "First Longitude."
+        },
+        {
+          "name": "latitude_1",
+          "type": "number",
+          "required": true,
+          "description": "Second Latitude."
+        },
+        {
+          "name": "longitude_1",
+          "type": "number",
+          "required": true,
+          "description": "Second Longitude."
+        }
+      ],
+      "returns": {
+        "type": "number",
+        "description": "Distance between the 2 pairs in kilometers."
+      },
+      "side_effects": "None. This is a pure computation tool."
+    }
+  ],
+  "data_models": {
+    "description": "Reference data models used as argument or return types by the tools above.",
+    "Contact": {
+      "description": "A contact person entry in the contact database.",
+      "fields": {
+        "person_id": {
+          "type": "string",
+          "description": "Unique identifier for the contact person (UUID)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the contact person."
+        },
+        "phone_number": {
+          "type": "string",
+          "description": "Phone number of the contact person."
+        },
+        "relationship": {
+          "type": "string",
+          "description": "Relationship between user and this contact.",
+          "nullable": true
+        },
+        "is_self": {
+          "type": "boolean",
+          "description": "True if the contact corresponds to the current user."
+        }
+      }
+    },
+    "Message": {
+      "description": "A message entry in the messaging database.",
+      "fields": {
+        "message_id": {
+          "type": "string",
+          "description": "Unique identifier for the message (UUID)."
+        },
+        "sender_person_id": {
+          "type": "string",
+          "description": "Unique identifier of the sender contact."
+        },
+        "sender_phone_number": {
+          "type": "string",
+          "description": "Phone number of the sender."
+        },
+        "recipient_person_id": {
+          "type": "string",
+          "description": "Unique identifier of the recipient contact.",
+          "nullable": true
+        },
+        "recipient_phone_number": {
+          "type": "string",
+          "description": "Phone number of the recipient."
+        },
+        "content": {
+          "type": "string",
+          "description": "Message payload text."
+        },
+        "creation_timestamp": {
+          "type": "number",
+          "description": "POSIX timestamp of when the message was created."
+        }
+      }
+    },
+    "Reminder": {
+      "description": "A reminder entry in the reminder database.",
+      "fields": {
+        "reminder_id": {
+          "type": "string",
+          "description": "Unique identifier for the reminder (UUID)."
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the reminder."
+        },
+        "creation_timestamp": {
+          "type": "number",
+          "description": "POSIX timestamp of when the reminder was created."
+        },
+        "reminder_timestamp": {
+          "type": "number",
+          "description": "POSIX timestamp of when the user wants to be reminded."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude of the location associated with this reminder.",
+          "nullable": true
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude of the location associated with this reminder.",
+          "nullable": true
+        }
+      }
+    },
+    "Location": {
+      "description": "A geographic coordinate pair.",
+      "fields": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate."
+        }
+      }
+    },
+    "DateTimeInfo": {
+      "description": "A dictionary of date time components derived from a POSIX timestamp.",
+      "fields": {
+        "year": {
+          "type": "integer",
+          "description": "Year."
+        },
+        "month": {
+          "type": "integer",
+          "description": "Month (1-12)."
+        },
+        "day": {
+          "type": "integer",
+          "description": "Day of month."
+        },
+        "hour": {
+          "type": "integer",
+          "description": "Hour in 24hr format (0-23)."
+        },
+        "minute": {
+          "type": "integer",
+          "description": "Minute (0-59)."
+        },
+        "second": {
+          "type": "integer",
+          "description": "Second (0-59)."
+        },
+        "isoweekday": {
+          "type": "integer",
+          "description": "ISO weekday: 1 (Monday) to 7 (Sunday)."
+        }
+      }
+    },
+    "TimeDelta": {
+      "description": "A time difference represented as days and seconds.",
+      "fields": {
+        "days": {
+          "type": "integer",
+          "description": "Number of whole days in the difference."
+        },
+        "seconds": {
+          "type": "integer",
+          "description": "Remaining seconds after whole days."
+        }
+      }
+    },
+    "TimeComponents": {
+      "description": "Time broken into hour, minute, and second components.",
+      "fields": {
+        "hour": {
+          "type": "integer",
+          "description": "Hour component."
+        },
+        "minute": {
+          "type": "integer",
+          "description": "Minute component."
+        },
+        "second": {
+          "type": "integer",
+          "description": "Second component."
+        }
+      }
+    }
+  },
+  "tool_type_legend": {
+    "read": "Retrieves information from the database or external service without modifying any state.",
+    "write": "Modifies the database state (creates, updates, or deletes records). The agent must confirm with the user before calling write tools.",
+    "generic": "General-purpose utility that may or may not involve state changes depending on context."
+  }
+}
